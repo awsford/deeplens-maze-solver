@@ -7,14 +7,14 @@ import matplotlib.font_manager as fm
 import uuid
 
 prefix = uuid.uuid4().hex
-
-font_location = fm.FontProperties(fname='./AmazonEmber.ttf')
+dpi=96
 
 if(len(sys.argv)!=2):
     sys.exit("Usage:\nmaze_solver.py [Input Image]")
 
 arg = sys.argv[1]
 threshold = 110
+
 image_file = Image.open(arg)
 # Grayscale instead of using single channel (see comments below)
 image_file = image_file.convert('L')
@@ -28,28 +28,22 @@ img = image_file.resize((600,400))
 img.save("/tmp/"+ prefix + "resize.png")
 
 rgb_img = plt.imread("/tmp/"+ prefix + "resize.png")
-
-plt.figure(figsize=(15,10))
-fig = plt.figure(figsize=(15,10))
+awslogo = plt.imread('./awslogo.png')
+plt.figure(figsize=(600/dpi,400/dpi))
+fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
-ax.text(0.9, 0.02, 'AWS', transform=ax.transAxes,
-        fontsize=60, color='#2074d5', alpha=1,
-        ha='right', va='bottom',fontweight='bold',fontproperties=font_location)
 ax.set_axis_off()
 fig.add_axes(ax)
 plt.imshow(rgb_img)
+
 
 x0,y0 = 0,0
 x1,y1 = 599,399
 
 plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
 plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
-
-# load and skeleton - the threshold on single channel here was unreliable, so moving it out
-#if rgb_img.shape.__len__()>2:
-#    thr_img = rgb_img[:,:,2] > np.max(rgb_img[:,:,2])/2
-#else:
-#    thr_img = rgb_img > np.max(rgb_img)/2
+plt.imshow(awslogo,cmap='jet',alpha=1)
+plt.savefig("/tmp/"+ prefix + "resize.png")
 
 thr_img = rgb_img
 skeleton = skeletonize(thr_img)
@@ -60,7 +54,7 @@ plt.imshow(skeleton)
 mapT = ~skeleton
 plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
 plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
-
+plt.imshow(awslogo,cmap='jet',alpha=1)
 plt.savefig("/tmp/"+ prefix + "start_end.png")
 _mapt = np.copy(mapT)
 
@@ -115,8 +109,8 @@ while(True):
         edx = x
         edy = y
         break
-plt.figure(figsize=(15,10))
-fig = plt.figure(figsize=(15,10))
+plt.figure(figsize=(600/dpi,400/dpi))
+fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
@@ -146,16 +140,18 @@ while(True):
     path_y.append(y)
     path_x.append(x)
 
-fig = plt.figure(figsize=(15,10))
+fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
-ax.text(0.9, 0.02, 'AWS', transform=ax.transAxes,
-        fontsize=60, color='#2074d5', alpha=1,
-        ha='right', va='bottom',fontweight='bold',fontproperties=font_location)
+#ax.text(0.9, 0.02, 'AWS', transform=ax.transAxes,
+#        fontsize=60, color='#2074d5', alpha=1,
+#        ha='right', va='bottom',fontweight='bold',fontproperties=font_location)
 ax.set_axis_off()
 fig.add_axes(ax)
 plt.imshow(rgb_img)
 plt.plot(path_x,path_y, 'r-', linewidth=5,color='#ff9900')
 plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
 plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
+
+plt.imshow(awslogo,cmap='jet',alpha=1)
 
 plt.savefig("/tmp/"+ prefix + "solved.png")
