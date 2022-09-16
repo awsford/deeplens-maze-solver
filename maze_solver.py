@@ -34,27 +34,27 @@ fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
-plt.imshow(rgb_img)
+plt.imshow(rgb_img, cmap='gray')
 
 
 x0,y0 = 0,0
 x1,y1 = 599,399
 
-plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
-plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
-plt.imshow(awslogo,cmap='jet',alpha=1)
+plt.plot(x0+20,y0+20, '#003181', markersize = 15, marker = '>')
+plt.plot(x1-15,y1-25, '#003181', markersize = 25, marker = '*')
+plt.imshow(awslogo,cmap='jet',alpha=0.9)
 plt.savefig("/tmp/"+ prefix + "resize.png")
 
 thr_img = rgb_img
 skeleton = skeletonize(thr_img)
-plt.imshow(skeleton)
+plt.imshow(skeleton, cmap='gray')
 
 # Create a map of routes through
 #map of routes.
 mapT = ~skeleton
-plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
-plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
-plt.imshow(awslogo,cmap='jet',alpha=1)
+plt.plot(x0+20,y0+20, '#003181', markersize = 15, marker = '>')
+plt.plot(x1-15,y1-25, '#003181', markersize = 25, marker = '*')
+plt.imshow(awslogo,cmap='jet',alpha=0.9)
 plt.savefig("/tmp/"+ prefix + "start_end.png")
 _mapt = np.copy(mapT)
 
@@ -114,7 +114,7 @@ fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
 ax.set_axis_off()
 fig.add_axes(ax)
-plt.imshow(dst)
+plt.imshow(dst, cmap='gray')
 
 path_x = []
 path_y = []
@@ -142,16 +142,14 @@ while(True):
 
 fig = plt.figure(figsize=(600/dpi,400/dpi))
 ax = plt.Axes(fig, [0., 0., 1., 1.])
-#ax.text(0.9, 0.02, 'AWS', transform=ax.transAxes,
-#        fontsize=60, color='#2074d5', alpha=1,
-#        ha='right', va='bottom',fontweight='bold',fontproperties=font_location)
+
 ax.set_axis_off()
 fig.add_axes(ax)
-plt.imshow(rgb_img)
+plt.imshow(rgb_img, cmap='gray')
 plt.plot(path_x,path_y, 'r-', linewidth=5,color='#ff9900')
-plt.plot(x0,y0, 'gx', markersize = 45, marker = 'o')
-plt.plot(x1,y1, 'rx', markersize = 45, marker = 'o')
+plt.plot(x0+20,y0+20, '#003181', markersize = 15, marker = '>')
+plt.plot(x1-15,y1-25, '#003181', markersize = 25, marker = '*')
 
-plt.imshow(awslogo,cmap='jet',alpha=1)
+plt.imshow(awslogo,cmap='jet',alpha=0.9)
 
 plt.savefig("/tmp/"+ prefix + "solved.png")
