@@ -1,8 +1,5 @@
 from collections import namedtuple
 import unittest
-import logging
-import os
-import sys
 
 from .app import lambda_handler
 
@@ -27,6 +24,26 @@ class TestMazeSolveFullApp(unittest.TestCase):
             "solve_end": [599, 399]
         }
         response = lambda_handler(payload, lambda_context())
+        return
+    
+    def test_handdrawn_mazes(self):
+        image_paths = [
+            "images/example_1.png",
+            "images/example_2.png",
+            "images/example_3.png",
+            "images/example_4.jpg"
+        ]
+        payload = {
+            "image_dimensions": (600, 400),
+            "solve_resolution": 30,
+            "solve_start": [0, 0],
+            "solve_end": [599, 399]
+        }
+        responses = []
+        for image_path in image_paths:
+            _payload = { "image_path": image_path, **payload }
+            responses.append(lambda_handler(_payload, lambda_context()))
+        
         return
 
 
