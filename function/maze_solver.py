@@ -2,14 +2,16 @@ from typing import List, Tuple
 from skimage.morphology import skeletonize
 import numpy as np
 
+from .helpers import SolveRequest
+
 class MazeSolver:
-    def __init__(self, image: np.ndarray, start_point: List[int], end_point: List[int], resolution: int):
+    def __init__(self, image: np.ndarray, request: SolveRequest):
         self.image = image
         self.skeleton = skeletonize(image)
         self.graph = ~self.skeleton
-        self.start_point = start_point
-        self.end_point = end_point
-        self.resolution = resolution
+        self.start_point = request.solve_start
+        self.end_point = request.solve_end
+        self.resolution = request.solve_resolution
 
         self.pts_x = [0]
         self.pts_y = [0]
