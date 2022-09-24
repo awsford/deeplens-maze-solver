@@ -3,26 +3,20 @@ import math
 import time
 from PIL import Image
 import matplotlib.pyplot as plt
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 from numpy.typing import ArrayLike
 from dataclasses import asdict, dataclass
-
-from aws_lambda_powertools.logging import Logger
-from aws_lambda_powertools.tracing import Tracer
 
 from .helpers import SolveRequest
 from .maze_solver import MazeSolver
 
-logger = Logger(service="interactive-mazer-solver", level="debug")
-
 IMAGE_DPI = 96
-COLOUR_THRESHOLD = 110
+COLOUR_THRESHOLD = 200
 AWS_LOGO_IMAGE = './function/awslogo.png'
 
 awslogo = plt.imread(AWS_LOGO_IMAGE)
 
-@logger.inject_lambda_context(log_event=True)
-def lambda_handler(event: Any, context: Dict) -> Dict:
+def lambda_handler(event: Any, context: Dict = {}) -> Dict:
     """
     INPUT: {
         "image_path": str,
@@ -36,10 +30,10 @@ def lambda_handler(event: Any, context: Dict) -> Dict:
     prefix = uuid.uuid4().hex[:8]
 
     # constrain maze points to within 1 resolution step from edge
-    request.solve_end[0] = max(request.solve_end[0], request.solve_resolution)
-    request.solve_end[1] = max(request.solve_end[1], request.solve_resolution)
-    request.solve_start[0] = min(request.solve_start[0], request.solve_resolution)
-    request.solve_start[1] = min(request.solve_start[1], request.solve_resolution)
+    # request.solve_end[0] = max(request.solve_end[0], request.solve_resolution)
+    # request.solve_end[1] = max(request.solve_end[1], request.solve_resolution)
+    # request.solve_start[0] = min(request.solve_start[0], request.solve_resolution)
+    # request.solve_start[1] = min(request.solve_start[1], request.solve_resolution)
 
     img = read_raw_image(request, prefix)
     # read thresholded image, purely black and white
@@ -113,9 +107,9 @@ def write_image(
     ## route through
     ax.plot(pathX, pathY, 'r-', linewidth=5, color='#ff9900')
     # start marker
-    plt.plot(request.solve_start[0] + 8, request.solve_start[1] + 8, '#FF00E6', markersize=24, marker='o')
+    plt.plot(request.solve_start[0], request.solve_start[1], '#FF00E6', markersize=10, marker='o')
     # end marker
-    plt.plot(request.solve_end[0] - 8, request.solve_end[1] - 8, '#0066FF', markersize=24, marker='o')
+    plt.plot(request.solve_end[0], request.solve_end[1], '#0066FF', markersize=10, marker='o')
     # watermark
     fig.figimage(watermark_image, 0, 0, zorder=3, alpha=.5, origin='upper')
     plt.close()
