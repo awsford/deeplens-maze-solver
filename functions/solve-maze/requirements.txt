@@ -1,5 +1,0 @@
-scikit-image
-numpy
-matplotlib
-Pillow
-aws_lambda_powertools

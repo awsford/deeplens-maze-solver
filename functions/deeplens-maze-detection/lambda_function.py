@@ -78,7 +78,8 @@ def infinite_infer_run():
 
     try:
         while True:
-            time.sleep(1)
+            publish({ "status": "WORKING", "message": "staring loop, fetching frame in 2 seconds..." })
+            time.sleep(2)
             payload = {}
 
             # Get a frame from the video stream

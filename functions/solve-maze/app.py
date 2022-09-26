@@ -1,6 +1,7 @@
 import uuid
 import math
 import time
+import json
 from PIL import Image
 import matplotlib.pyplot as plt
 from typing import Any, Dict, List
@@ -26,6 +27,7 @@ def lambda_handler(event: Any, context: Dict = {}) -> Dict:
         "solve_end": List[int, int]
     }
     """
+    print("REQUEST", json.dumps(event))
     request = SolveRequest(**event)
     prefix = uuid.uuid4().hex[:8]
 
