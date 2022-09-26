@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+}
+
+.maze-row {
+  padding-top: 10px;
+  margin-bottom: 50px;
+  flex-wrap: nowrap !important;
+}
+
+.maze-card {
+  margin: auto 10px;
+}
