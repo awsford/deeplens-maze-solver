@@ -17,12 +17,12 @@ TARGET_IMAGE_WIDTH = 600
 TARGET_IMAGE_HEIGHT = 400
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 
-LOWER_GREEN = [ 42,  155, 236 ]
-UPPER_GREEN = [ 41,  143, 107 ]
-LOWER_WHITE = [ 0,     0, 240 ]
-UPPER_WHITE = [ 0,     0, 255 ]
-LOWER_PINK  = [ 173,  46, 255 ]
-UPPER_PINK  = [ 173, 212, 195 ]
+LOWER_GREEN = [30, 100, 40]
+UPPER_GREEN = [90, 255, 255]
+LOWER_WHITE = [0, 0, 100]
+UPPER_WHITE = [100, 100, 255]
+LOWER_PINK  = [360, 100, 100]
+UPPER_PINK  = [200, 255, 255]
 
 client = greengrasssdk.client('iot-data')
 iot_topic = '$aws/things/{}/infer'.format(os.environ['AWS_IOT_THING_NAME'])
@@ -140,23 +140,23 @@ def infinite_infer_run():
             # unique id for this detection
             idx = uuid.uuid4().hex
 
-            publish({ "status": "WORKING", "message": f"Looking for white area within green bounds..."})
+            publish({ "status": "WORKING", "id": str(idx), "message": f"Looking for white area within green bounds..."})
             #    mask for white and crop to bounding box
             mask = mask_frame(frame, LOWER_WHITE, UPPER_WHITE)
             contours = get_masked_contours(mask)
 
             if len(contours) == 0:
-                publish({ "status": "WORKING", "message": "No white bounds found, continuing."})
+                publish({ "status": "WORKING", "id": str(idx), "message": "No white bounds found, continuing."})
                 continue
 
             x, y, w, h = cv2.boundingRect(contour)
 
             # check that a white area has actually been found
             if w * h < TARGET_IMAGE_WIDTH * TARGET_IMAGE_HEIGHT:
-                publish({ "status": "WORKING", "message": f"White bounds too small - shape = {(x, y)}"})
+                publish({ "status": "WORKING", "id": str(idx), "message": f"White bounds too small - shape = {(x, y)}"})
                 continue
 
-            publish({ "status": "WORKING", "message": f"Found white bounds - shape = {(x,y, w, h)}"})
+            publish({ "status": "WORKING", "id": str(idx), "message": f"Found white bounds - shape = {(x,y, w, h)}"})
             
 
             # downscale image for transfer and solve
@@ -168,13 +168,13 @@ def infinite_infer_run():
 
             """ ====== PINK ====== """
 
-            publish({ "status": "WORKING", "message": f"Looking for maze start / end points..." })
+            publish({ "status": "WORKING", "id": str(idx), "message": f"Looking for maze start / end points..." })
 
             mask = mask_frame(frame, LOWER_PINK, UPPER_PINK)
             contours = get_masked_contours(mask)
             contours = sorted(contours, key=lambda x: cv2.contourArea(x), reverse=True)[:2]
 
-            publish({ "status": "WORKING", "message": f"Found suitable start/stop points for solve" })
+            publish({ "status": "WORKING", "id": str(idx), "message": f"Found suitable start/stop points for solve" })
 
             # blank out the contours on the original frame
             cv2.drawContours(frame, contours, -1, (255, 255, 255), -1)
@@ -194,15 +194,16 @@ def infinite_infer_run():
             # handle upload of frame to s3
             s3_key = f"{time.strftime('%Y%m%d')}/{idx}.png"
             frame_bytes = cv2.imencode('.png', frame)[1].tobytes()
+            frame_copy_bytes = cv2.imencode('.png', frame_copy)[1].tobytes()
             s3.put_object(Body=frame_bytes, Bucket=BUCKET_NAME, Key=f"processed_frames/{s3_key}")
-            s3.put_object(Body=frame_bytes, Bucket=BUCKET_NAME, Key=f"original_frames/{s3_key}")
+            s3.put_object(Body=frame_copy_bytes, Bucket=BUCKET_NAME, Key=f"original_frames/{s3_key}")
 
             s3_uri = f"s3://{BUCKET_NAME}/processed_frames/{s3_key}"
-            publish({ "status": "COMPLETE", "message": f"maze image uploaded to bucket: - {s3_uri}" })
+            publish({ "status": "COMPLETE", "id": str(idx), "message": f"maze image uploaded to bucket: - {s3_uri}" })
             payload["image_path"] = s3_uri
 
             # Send results back to IoT or output to video stream
-            publish({ "status": "FOUND_MAZE", "payload": payload })
+            publish({ "status": "FOUND_MAZE", "id": str(idx), "payload": payload })
 
             # update local display
             local_display.set_frame_data(frame)
