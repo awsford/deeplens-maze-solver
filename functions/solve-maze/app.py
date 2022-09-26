@@ -11,7 +11,7 @@ from .helpers import SolveRequest
 from .maze_solver import MazeSolver
 
 IMAGE_DPI = 96
-COLOUR_THRESHOLD = 200
+COLOUR_THRESHOLD = 140
 AWS_LOGO_IMAGE = './function/awslogo.png'
 
 awslogo = plt.imread(AWS_LOGO_IMAGE)

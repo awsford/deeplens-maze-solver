@@ -15,6 +15,17 @@ class TestMazeSolveFullApp(unittest.TestCase):
         }
         response = lambda_handler(payload)
         return
+    
+    def test_dl_maze(self):
+        payload = {
+            "image_path": "images/live.png",
+            "image_dimensions": [ 600, 400 ],
+            "solve_start": [ 129, 156 ],
+            "solve_end": [ 460, 68 ],
+            "solve_resolution": 20,
+        }
+        response = lambda_handler(payload)
+        return
 
     def test_hard_maze(self):
         payload = {
