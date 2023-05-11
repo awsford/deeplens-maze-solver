@@ -64,19 +64,19 @@ function App() {
               <Row key={idx} xs={4} className="g-4 maze-row justify-content-center">
                 <Card className="maze-card">
                   <Card.Title className="mb-2 text-muted text-center maze-card-title">Raw</Card.Title>
-                  <Card.Img variant="top" src={maze.raw} height="100px" />
+                  <Card.Img variant="top" src={maze.raw} height="300px" />
                 </Card>
                 <Card className="maze-card">
                   <Card.Title className="mb-2 text-muted text-center maze-card-title">Processed</Card.Title>
-                  <Card.Img variant="top" src={maze.processed} height="100px" />
+                  <Card.Img variant="top" src={maze.processed} height="300px" />
                 </Card>
                 <Card className="maze-card">
                   <Card.Title className="mb-2 text-muted text-center maze-card-title">Skeleton</Card.Title>
-                  <Card.Img variant="top" src={maze.skeleton} height="100px" />
+                  <Card.Img variant="top" src={maze.skeleton} height="300px" />
                 </Card>
                 <Card className="maze-card">
                   <Card.Title className="mb-2 text-muted text-center maze-card-title">Solved</Card.Title>
-                  <Card.Img variant="top" src={maze.solved} height="100px" />
+                  <Card.Img variant="top" src={maze.solved} height="300px" />
                 </Card>
               </Row>
             ))
